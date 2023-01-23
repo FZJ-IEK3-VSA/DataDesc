@@ -1,0 +1,9 @@
+# OpenAPI Extension Generator; General Metadata Merger
+pyyaml
+
+# General Metadata Creator
+jupyter
+ipywidgets
+
+# ORKG Metadata Uploader
+orkg

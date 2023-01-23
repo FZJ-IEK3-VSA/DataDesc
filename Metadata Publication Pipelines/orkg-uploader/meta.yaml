@@ -1,0 +1,31 @@
+info:
+  contact:
+    email: joe.doe@example.org
+    name: Joe Doe
+    url: orcid.org/xyz
+    x-affiliation: 'Forschungszentrum '
+  description: My Software does this and that
+  license:
+    name: MIT
+  title: My Test Software 1234
+  version: '0.1'
+  x-category: testing, finance
+  x-ci: travis-ci.com/Example/My-Software
+  x-created: '2022-01-01'
+  x-dev-status: Work In Progress
+  x-download-url: github.com/Example/My-Software/archive/xy.tar.gz
+  x-first-release: '2022-01-01'
+  x-funder: Some Institution
+  x-funding: FC-0001
+  x-id: unique-id
+  x-issue-tracker: github.com/Example/My-Software/issues
+  x-keywords: software, finance
+  x-os: Linux, Windows
+  x-part-of: Larger Project
+  x-platform: Python
+  x-programming-lang: Python
+  x-reference-pub: doi.org/xyz
+  x-related-links: pypi.org/My-Software
+  x-release-notes: fixed issue
+  x-repository: github.com/Example/My-Software
+openapi: 3.0.0

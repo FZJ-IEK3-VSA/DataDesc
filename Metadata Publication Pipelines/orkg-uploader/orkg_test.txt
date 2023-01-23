@@ -1,0 +1,91 @@
+{
+    "resource": {
+        "name": "My Test Software 1234",
+        "classes": [
+            "C43001"
+        ],
+        "values": {
+            "P49052": [
+                {
+                    "text": "github.com/Example/My-Software/issues"
+                }
+            ],
+            "P3000": [
+                {
+                    "text": "software, finance"
+                }
+            ],
+            "P37134": [
+                {
+                    "text": "unique-id"
+                }
+            ],
+            "P49049": [
+                {
+                    "text": "Work In Progress"
+                }
+            ],
+            "P6": [
+                {
+                    "label": "Joe Doe",
+                    "classes": [
+                        "C29021"
+                    ]
+                }
+            ],
+            "P49020": [
+                {
+                    "text": "2022-01-01 00:00:00"
+                }
+            ],
+            "P49030": [
+                {
+                    "text": "My Test Software 1234"
+                }
+            ],
+            "P49028": [
+                {
+                    "text": "Larger Project"
+                }
+            ],
+            "P49031": [
+                {
+                    "text": "pypi.org/My-Software"
+                }
+            ],
+            "P8": [
+                {
+                    "text": "joe.doe@example.org"
+                }
+            ],
+            "P14": [
+                {
+                    "text": "My Software does this and that"
+                }
+            ],
+            "P7": [
+                {
+                    "label": "Forschungszentrum ",
+                    "classes": [
+                        "C29020"
+                    ]
+                }
+            ],
+            "P49047": [
+                {
+                    "text": "travis-ci.com/Example/My-Software"
+                }
+            ],
+            "P49051": [
+                {
+                    "text": "FC-0001"
+                }
+            ],
+            "P49053": [
+                {
+                    "text": "doi.org/xyz"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,31 @@
+info:
+  contact:
+    email: email
+    name: author first name last name
+    url: author uri?
+    x-affiliation: author affil
+  description: description
+  license:
+    name: license
+  title: title
+  version: version num
+  x-category: app category
+  x-ci: ci
+  x-created: '2000-01-01'
+  x-dev-status: dev status
+  x-download-url: download url
+  x-first-release: '1000-02-02'
+  x-funder: funder
+  x-funding: funding
+  x-id: unique id
+  x-issue-tracker: issue tracker
+  x-keywords: keyword 1, keyword2
+  x-os: os
+  x-part-of: is part of
+  x-platform: runtime platform
+  x-programming-lang: language
+  x-reference-pub: ref publicaton
+  x-related-links: related links
+  x-release-notes: release notes
+  x-repository: code repo
+openapi: 3.0.0

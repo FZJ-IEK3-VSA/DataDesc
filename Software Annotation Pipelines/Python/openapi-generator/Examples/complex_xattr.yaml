@@ -1,0 +1,149 @@
+openapi: 3.0.0
+info:
+  title: My Spec
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ExampleClass:
+      type: object
+      description: This is a simple example class
+      properties:
+        Id:
+          type: integer
+        Text:
+          type: string
+      required:
+      - Id
+    MyEnum:
+      type: string
+      enum: &id001
+      - ValueA
+      - ValueB
+      - ValueC
+    MyComplexDataType:
+      type: object
+      description: This is a complex class with different properties
+      properties:
+        MyFloat:
+          type: number
+        MyInt:
+          type: integer
+        MyString:
+          type: string
+        MyEnumValue:
+          type: string
+          enum: *id001
+        MyOptionalString:
+          type: string
+        MySubObject:
+          type: object
+          description: This is a simple example class
+          properties:
+            Id:
+              type: integer
+            Text:
+              type: string
+          required:
+          - Id
+        MyList:
+          type: array
+          items:
+            type: number
+        MyObjectList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExampleClass'
+        MyDictionary:
+          type: object
+          additionalProperties:
+            type: string
+        MyNestedList:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: integer
+      required:
+      - MyFloat
+      - MyInt
+      - MyString
+      - MyEnumValue
+      - MySubObject
+      - MyList
+      - MyObjectList
+      - MyDictionary
+    MyMonetaryClass:
+      type: object
+      description: This is a simple monetary class
+      properties:
+        Value:
+          type: integer
+          x-currency: euro
+          x-toUSD: 1.1
+        Time:
+          type: string
+          x-format: YYYY-mm-dd
+      required:
+      - Value
+      - Time
+    PowerOutputCalculator:
+      type: object
+      description: This is a simple calculator class
+      properties:
+        HubHeight:
+          type: integer
+          x-unit_type: distance
+          x-unit: meters
+        PowerMeasurement:
+          type: object
+          x-dimensions:
+            location_of_measurement:
+              unit_type: location
+              unit: country name
+            time_of_measurement:
+              unit_type: time
+              unit: days since 1895-01-01
+          properties: {}
+        Example:
+          type: object
+          description: This is a simple example class
+          properties:
+            Id:
+              type: integer
+            Text:
+              type: string
+          required:
+          - Id
+      x-functions:
+        subtract_value:
+          type: object
+          x-is_interface_function: true
+          properties:
+            minuend:
+              type: integer
+              x-domain: real
+              x-input_output: input
+            subtrahend:
+              type: integer
+              x-domain: real
+              x-input_output: input
+          required:
+          - minuend
+          - subtrahend
+      required:
+      - HubHeight
+      - PowerMeasurement
+      - Example
+    isolated_function:
+      type: object
+      properties:
+        val1:
+          type: integer
+        val2:
+          type: integer
+      required:
+      - val1
+      - val2

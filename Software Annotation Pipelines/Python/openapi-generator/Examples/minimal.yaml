@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: My Spec
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    ExampleClass:
+      type: object
+      description: This is a simple example class
+      properties:
+        Id:
+          type: integer
+        Text:
+          type: string
+      required:
+      - Id
+    MyEnum:
+      type: string
+      enum:
+      - ValueA
+      - ValueB
+      - ValueC
+    MyComplexDataType:
+      type: object
+      description: This is a complex class with different properties
+      properties:
+        MyFloat:
+          type: number
+        MyInt:
+          type: integer
+        MyString:
+          type: string
+        MyEnumValue:
+          $ref: '#/components/schemas/MyEnum'
+        MyOptionalString:
+          type: string
+        MySubObject:
+          $ref: '#/components/schemas/ExampleClass'
+        MyList:
+          type: array
+          items:
+            type: number
+        MyObjectList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExampleClass'
+        MyDictionary:
+          type: object
+          additionalProperties:
+            type: string
+        MyNestedList:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: integer
+      required:
+      - MyFloat
+      - MyInt
+      - MyString
+      - MyEnumValue
+      - MySubObject
+      - MyList
+      - MyObjectList
+      - MyDictionary

@@ -1,0 +1,22 @@
+openapi: 3.0.0
+info:
+  title: My Addition
+  version: 0.0.1
+paths: {}
+components:
+  schemas:
+    MyMonetaryClass:
+      type: object
+      description: This is a simple monetary class addition
+      properties:
+        MyList:
+          type: array
+          items:
+            type: number
+        Value:
+          type: integer
+          x-currency: euro
+          x-toUSD: 1.1
+      required:
+      - MyList
+      - Value
