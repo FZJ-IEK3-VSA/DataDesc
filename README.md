@@ -48,3 +48,5 @@ Furthermore, the authors would like to thank the German Federal Government, the 
 In addition, the work was supported by the Lower Saxony Ministry of Science and Culture within the Lower Saxony ‘‘Vorab’’ of the Volkswagen Foundation under Grant 11-76251-13-3/19–ZN3488 (ZLE), and by the Center for Digital Innovation (ZDIN).
 
 This work was also supported by the Helmholtz Association under the program "Energy System Design".
+
+<a href="https://www.bmwk.de/Navigation/EN/Home/home.html"><img src="https://www.bmwk.de/SiteGlobals/BMWI/StyleBundles/Bilder/bmwi_logo_en.svg?__blob=normal&v=13" alt="BMWK Logo" width="130px"></a>
