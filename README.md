@@ -2,7 +2,7 @@
 
 # Ecosystem for machine-actionable Software Metadata
 
-Key components of the ecosystem are a metadata schema for software documentation with focus on interfaces, a machine-actionable metadata exchange format and a software  toolkit supporting the documentation, extraction and publication of software metadata..
+Key components of the ecosystem are a metadata schema for software documentation with focus on interfaces, a machine-actionable metadata exchange format and a software  toolkit supporting the documentation, extraction and publication of software metadata.
 
 ## Features
 The ecosystem for machine-actionable Software Metadata combines four distinct python software packages:
