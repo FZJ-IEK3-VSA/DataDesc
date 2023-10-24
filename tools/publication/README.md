@@ -2,13 +2,13 @@
 
 Table of contents:
 
-- [Introduction](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#introduction)
-- [Publication of software metadata on...](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#publication-of-software-metadata-on...)
-    - [GitHub](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#github)
-    - [Python Package Index (PyPi)](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#python-package-index-(pypi))
-    - [ReadTheDocs](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#readthedocs)
-    - [SwaggerHub](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#swaggerhub)
-    - [Open Research Knowledge Graph (ORKG)](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#open-research-knowledge-graph-(orkg))
+- [Introduction](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/publication#introduction)
+- [Publication of software metadata on...](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/publication#publication-of-software-metadata-on...)
+    - [GitHub](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/publication#github)
+    - [Python Package Index (PyPi)](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/publication#python-package-index-(pypi))
+    - [ReadTheDocs](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/publication#readthedocs)
+    - [SwaggerHub](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/publication#swaggerhub)
+    - [Open Research Knowledge Graph (ORKG)](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/publication#open-research-knowledge-graph-(orkg))
 
 ## Introduction
 
