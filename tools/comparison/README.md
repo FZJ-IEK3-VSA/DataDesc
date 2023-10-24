@@ -1,1 +1,1 @@
-Description of metadata comparisons.
+# Comparison of DataDesc documents

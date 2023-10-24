@@ -5,7 +5,7 @@ Table of contents:
 - [Annotation of research software](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#annotation-of-research-software)
     - [General information about a software](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#general-information-about-a-software)
     - [Technical information about a software interface](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#technical-information-about-a-software-interface)
-    - [Merging general and technical information in one metadata document](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#merging-general-and-technical-information-in-one-metadata-document)
+    - [Merging general and technical information in one DataDesc document](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#merging-general-and-technical-information-in-one-datadesc-document)
 - [Annotation of datasets](https://github.com/FZJ-IEK3-VSA/DataDesc/tree/main/tools/annotation#annotation-of-datasets)
 
 ## Annotation of research software
@@ -61,7 +61,7 @@ python -m openapi_generator -m <FILE_TO_PARSE> -o <OUTPUT_FILE_NAME> [--json]
 ```
 The optional `--json` flag at the end creates a JSON file instead of YAML but is not compatible with the rest of the publication pipeline.
 
-### Merging general and technical information in one metadata document
+### Merging general and technical information in one DataDesc document
 
 Last but not least, the workflow needs information on both the general as well as the technical side of the software. Since the form and parser focus on two separate sections of the final metadata file - `info` and `components` - merging the two is relatively easy by appending one file's contents to the other's.
 
