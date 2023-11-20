@@ -1079,3 +1079,494 @@ Explaining the structure of DataDesc JSON documents.
 The DataDesc vocabulary is used in the `info` and `components` section.
 
 ## Examples
+
+### Data Types
+
+In general, data can be divided into persistent and transient (volatile) data based on their longevity. Persistent data occurs most frequently in the form of files, which are written to a storage device of some sort. Volatile data, on the other hand, appears in the form of <mark>various data structures, variables, objects,</mark> etc.
+
+#### Volatile Data
+Most information in this subsection is inferred directly from the OpenAPI specification on [Data Types](https://swagger.io/docs/specification/data-models/data-types/). For more information, please refer to the frequently updated specification.
+
+##### Numbers
+OpenAPI, and by extension the DataDesc schema, provides two numeric types - `number` and `integer`. Whereas `integer` only supports integer numbers without decimal points, `number` also includes floating-point numbers. Adding the optional `format` keyword allows for specifying a certain numeric type:
+
+| type | format | description |
+| ---- | ------ | ----------- |
+| number | - | any numbers. |
+| number | float | floating-point numbers. |
+| number | double | floating-point numbers with double precision. |
+| integer | - | integer numbers. |
+| integer | int32 | signed 32-bit integers (most commonly used integer type). |
+| integer | int64 | signed 64-bit integers (`long` type) |
+
+##### Minimum and Maximum
+The `minimum` and `maximum` keywords make it possible to set lower and upper bounds for possible values.
+
+```json
+{
+    'type' : 'integer',
+    'minimum' : 1,
+    'maximum' : 20
+}
+```
+
+By default, `minimum` and `maximum` values are inclusive to the value range:
+```
+minimum <= value >= maximum
+```
+
+They may be excluded through the usage of the keywords `'exclusiveMinimum' : true` and `'exclusiveMaximum' : true`, respectively.
+
+##### Strings
+A string of text is defined as:
+```json
+{
+    'type' : 'string'
+}
+```
+
+Its length may be restricted using the `minLength` and `maxLength` keywords:
+```json
+{
+    'type' : 'string',
+    'minLength' : 3,
+    'maxLength' : 20
+}
+```
+
+An optional `format` modifier hints at the content and format of the string. While `format` is an open value and thereby supports any format, OpenAPI also provides a few built-in formats, which can be used by tools to validate the input or to map the value to a specific type in the chosen programming language:
+    * `date` - full-date notation as defined by [RFC 3339, section 5.6](https://tools.ietf.org/html/rfc3339#section-5.6), for example, *2017-07-21*
+    * `date-time` - date-time notation as defined by [RFC 3339, section 5.6](https://tools.ietf.org/html/rfc3339#section-5.6), for example, *2017-07-21T17:32:28Z*
+    * `password` - a hint to UIs to mask the input
+    * `byte` - base64-encoded characters, for example, *U3dhZ2dlciByb2Nrcw==*
+    * `binary` - binary data, used to describe files
+
+##### Boolean
+`'type' : 'boolean'` represents two values: `true` and `false`. Whereas truthy and falsy values such as 'true', '', 0 or `null` are deemed boolean values in most programming languages, OpenAPI does not consider these as such.
+
+##### Array
+Arrays are defined as:
+```json
+{
+    'type' : 'array'
+    'items' : 
+    {
+        'type' : 'string'
+    }
+}
+```
+
+Unlike native JSON, the `items` keyword is required when declaring arrays. The value of `items` is a schema that describes the type and format of array items. Arrays can be nested:
+```json
+# e.g. [ [1, 2], [3, 4] ]
+{
+    'type' : 'array',
+    'items' : 
+    {
+        'type' : 'array',
+        'items' : 
+        {
+            'type' : 'integer'
+        }
+    }
+}
+```
+
+and contain objects:
+
+```json
+{
+    'type' : 'array'
+    'items' : 
+    {
+        'type' : 'object',
+        'properties' : 
+        {
+            'id' : 
+            {
+                'type' : 'integer'
+            }
+        }
+    }
+}
+```
+
+Mixed-type arrays can be defined using `oneOf` or by omitting everything between the value brackets of `items`:
+
+```json
+{
+    'type' : 'array'
+    'items' : 
+    {
+        'oneOf' : 
+        {
+            'type' : 'string',
+            'type' : 'integer'
+        }
+    }
+}
+```
+
+Array length can be controlled using the `minItems` and `maxItems` keyword.
+
+The `uniqueItems : true` keyword specifies that all items in the array must be unique - as in a set.
+
+##### Object
+
+Objects are collections of property-value pairs. The `properties` keyword is used to define the object properties - you need to list the property names and specify a schema for each property.
+```json
+{
+    'type' : 'object',
+    'properties' : 
+    {
+        'id' : 
+        {
+            'type' : 'integer'
+        },
+
+        'name' : 
+        {
+            'type' : 'string'
+        }
+    }
+}
+```
+
+By default, all properties are optional. Required properties can be specified using the `required` keyword:
+```json
+{
+    'type' : 'object',
+    'properties' : 
+    {
+        'id' : 
+        {
+            'type' : 'integer'
+        },
+
+        'name' : 
+        {
+            'type' : 'string'
+        }
+    },
+    'required' : [ 'id', 'name' ]
+}
+```
+
+`readOnly` and `writeOnly` can be used to mark specific properties as read-only or write-only. This is useful, for example, when GET returns more properties than used in POST - you can use the same schema in both GET and POST and mark the extra properties as `readOnly`. `readOnly` properties are included in responses but not in requests. `writeOnly` properties may be sent in requests but not in responses.
+
+##### Tables
+
+Tables may be specified and provided by the user in multiple ways: as `CSV`, `JSON`, the commonly used pandas `DataFrame` or as a `NetCDF` file.
+The following section shows how the data types discussed above can be used to describe tables and data formats of varying complexity.
+
+
+Lists of Lists, Lists of Dictionaries, Dictionaries of Dictionaries as well as pandas DataFrames will contain the following information.
+|   | name | date | place |
+| - | ---- | ---- | ----- |
+|  0 | Joe   | 1990-01-13 | Berlin |
+|  1 | Niko  | 2000-05-20 | Munich |
+|  2 | Anna  | 1965-10-02 | Aachen |
+|  3 | Julia | 1983-08-30 | Berlin |
+
+
+###### Lists of Lists
+The Table may be represented using a list of lists. In this case, the first nested array is used to describe the column headers, whereas the following arrays correspond to the given rows. In Python, it might be represented as such:
+```python
+table = [
+    ["name","date","place"],        # header; may be omitted
+    ["Joe", "1990-01-13", "Berlin"],
+    ["Niko", "2000-05-20", "Munich"],
+    ["Anna", "1965-10-02", "Aachen"],
+    ["Julia", "1983-08-30", "Berlin"]
+]
+```
+
+And it could be described using the DataDesc schema and nested arrays.
+```json
+'inputVariables' : 
+{
+    'table' : 
+    {
+        'description': 'Birthdates and places of some people',
+        'type' : 'array',
+        'items' : 
+        {
+            'type' : 'array',
+            'items' : 
+            {
+                'type' : 'string'
+            }
+        }
+    }
+}
+```
+
+###### Lists of Dictionaries
+The table may also be represented as an array of dictionaries, where each dictionary in the array corresponds to a row, including the column headers as dictionary keys.
+```python
+table = [
+    {"name":"Joe", "date":"1990-01-13", "place":"Berlin"},
+    {"name":"Niko", "date":"2000-05-20", "place":"Munich"},
+    {"name":"Anna", "date":"1965-10-02", "place":"Aachen"},
+    {"name":"Julia", "date":"1983-08-30", "place":"Berlin"}
+]
+```
+```json
+'inputVariables' : 
+{
+    'table' : 
+    {
+        'description': 'Birthdates and places of some people',
+        'type' : 'array',
+        'items' : 
+        {
+            'type' : 'array',
+            'items' : 
+            {
+                'type' : 'object',
+                'properties' : 
+                {
+                    'name' : {'type' : 'string'},
+                    'date' : {'type' : 'string'},
+                    'place' : {'type' : 'string'}
+                }
+            }
+        }
+    }
+}
+```
+
+###### Dictionary of Dictionaries
+Note that there are multiple ways to represent the table, e.g. using indices as dictionary keys.
+```python
+table = {
+    0: {"name":"Joe", "date":"1990-01-13", "place":"Berlin"},
+    1: {"name":"Niko", "date":"2000-05-20", "place":"Munich"},
+    2: {"name":"Anna", "date":"1965-10-02", "place":"Aachen"},
+    3: {"name":"Julia", "date":"1983-08-30", "place":"Berlin"}
+}
+```
+```json
+{
+    'inputVariables' : 
+    {
+        'table' : 
+        {
+            'description': 'Birthdates and places of some people',
+            'type' : 'object',
+            'properties' : 
+            {
+                    'index' : {'type' : 'integer'},
+                    'data' : 
+                    {
+                        'type' : 'object',
+                        'properties' : 
+                        {
+                            'name' : {'type' : 'string'},
+                            'date' : {'type' : 'string'},
+                            'place' : {'type' : 'string'}
+                        }
+                    }
+                
+            }
+        }
+    }
+}
+```
+
+```python
+table = { # prone to failure due to possibly duplicate keys 
+    "Joe": {"date":"1990-01-13", "place":"Berlin"},
+    "Niko": {"date":"2000-05-20", "place":"Munich"},
+    "Anna": {"date":"1965-10-02", "place":"Aachen"},
+    "Julia": {"date":"1983-08-30", "place":"Berlin"}
+}
+```
+```json
+{
+'inputVariables' : {
+    'table' : {
+        'description': 'Birthdates and places of some people',
+        'type' : 'object',
+        'properties' : {
+                'index' : {'type' : 'string'},
+                'data' : 
+                {
+                    'type' : 'object',
+                    'properties' : {
+                        'date' : {'type' : 'string'},
+                        'place' : {'type' : 'string'}
+                    }
+                }
+            
+            }
+        }
+    }
+}
+```
+###### Pandas DataFrame
+With DataDesc it is also possible to describe more complex data types, such as pandas DataFrames.
+```python
+import pandas as pd
+table = pd.DataFrame( 
+        [
+            ["Joe", "1990-01-13", "Berlin"],
+            ["Niko", "2000-05-20", "Munich"],
+            ["Anna", "1965-10-02", "Aachen"],
+            ["Julia", "1983-08-30", "Berlin"]
+        ], columns=["name","date","place"]
+    )
+```
+```json
+{
+    'inputVariables' : {
+        'table' : {
+            'description': 'Birthdates and places of some people',
+            'type' : 'object',
+            'mediaType' : 'application/x-pandas+json',
+            'columns': {
+                'type' : 'object',
+                'properties' : {
+                    'name' : { 'type' : 'string' },
+                    'date' : {
+                        'type' : 'string',
+                        'format' : 'YYYY-MM-DD'
+                        },
+                    'place' : {'type' : 'string'}
+                }
+            }
+        }
+    }
+}
+```
+
+###### NetCDF & XArray
+For a more sophisticated example, NetCDF and XArray were used to describe a table illustrated on the [*ArcGIS Pro* helpdesk](https://pro.arcgis.com/de/pro-app/latest/help/data/multidimensional/fundamentals-of-netcdf-data-storage.htm) for NetCDF files.
+```json
+{
+    'inputVariables' : {
+        'table' : {
+            'description': 'Rainfall data',
+            'type' : 'object',
+            'mediaType' : 'application/x-netcdf',
+            'dimensions' : {
+                'lat' : {
+                    'type' : 'object',
+                    'properties' : {
+                        'size' : {
+                            'type' : 'integer',
+                            'description' : 'Number of latitudes',
+                            'minimum' : 1,
+                            'maximum' : 180,
+                            'example' : 3,
+                        }
+                    }
+                },
+                'lon' : {
+                    'type' : 'object',
+                    'properties' : {
+                        'size' : {
+                            'type' : 'integer',
+                            'description' : 'Number of longitudes',
+                            'minimum' : 1,
+                            'maximum' : 360,
+                            'example' : 4,
+                        }
+                    }
+                },
+                'time' : {
+                    'type' : 'object',
+                    'properties' : {
+                        'size' : {
+                            'type' : 'integer',
+                            'description' : 'Number of time steps',
+                            'minimum' : 1,
+                            'example' : 2,
+                        }
+                    }
+                }
+            },
+            'variables' : {
+                'description' : 'Variables of the dataset',
+                'type' : 'object',
+                'properties' : {
+                    'lat' : {
+                        'type' : 'object',
+                        'properties' : {
+                            'long_name' : {
+                                'type' : 'string',
+                                'description' : 'Long name of the variable',
+                                'example' : 'Latitude',
+                            },
+                            'units' : {
+                                'type' : 'string',
+                                'description' : 'Units of the variable',
+                                'example' : 'degrees_north',
+                            }
+                        }
+                        'dimensions' : ['lat']
+                    },
+                    'lon' : {
+                        'type' : 'object',
+                        'properties' : {
+                            'long_name' : {
+                                'type' : 'string',
+                                'description' : 'Long name of the variable',
+                                'example' : 'Longitude',
+                            },
+                            'units' : {
+                                'type' : 'string',
+                                'description' : 'Units of the variable',
+                                'example' : 'degrees_east',
+                            }
+                        },
+                        'dimensions' : ['lon']
+                    },
+                    'time' : {
+                        'type' : 'object',
+                        'properties' : {
+                            'long_name' : {
+                                'type' : 'string',
+                                'description' : 'Long name of the variable',
+                                'example' : 'Time',
+                            },
+                            'units' : {
+                                'type' : 'string',
+                                'description' : 'Units of the variable',
+                                'example' : 'days since 1895-01-01',
+                            },
+                            'calendar' : {
+                                'type' : 'string',
+                                'description' : 'Calendar used for the variable',
+                                'example' : 'gregorian',
+                            }
+                        },
+                        'dimensions' : ['time']
+                    },
+                    'rainfall' : {
+                        'type' : 'object',
+                        'properties' : {
+                            'long_name' : {
+                                'type' : 'string',
+                                'description' : 'Long name of the variable',
+                                'example' : 'Precipitation',
+                            },
+                            'units' : {
+                                'type' : 'string',
+                                'description' : 'Units of the variable',
+                                'example' : 'mm yr-1',
+                            },
+                            'missing_value' : {
+                                'type' : 'number',
+                                'description' : 'Missing value of the variable',
+                                'example' : -9999.0
+                            }
+                        },
+                        'dimensions' : ['time', 'lat', 'lon']
+                    }
+                }
+            }
+        }
+    }
+}
+```
