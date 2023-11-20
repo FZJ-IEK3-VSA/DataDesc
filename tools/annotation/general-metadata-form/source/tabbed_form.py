@@ -27,6 +27,7 @@ def _tab_setup(title, tab_contents, tab_contents_titles, content_types):
         children = _children
     return (title, children)
 
+
 def software_md():
     title = 'Software Metadata'
     tab_contents = ['Software Title', 'Description', 'Creation Date', 'First Release Date', 'License']
