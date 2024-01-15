@@ -7,7 +7,7 @@ layout = widgets.Layout(width="auto", height="40px")
 style_kwargs = { 'layout' : fullWidthLayout, 'style' : {'description_width': 'initial'} }
 style = {'description_width' : 'initial'}
 tab = widgets.Tab(layout=fullWidthLayout)
-meta_file = FileLink("./meta.yaml", result_html_prefix="Download meta.yaml")
+meta_file = FileLink("./meta.json", result_html_prefix="Download meta.json")
 output = widgets.Textarea()
 prop_names = []
 
@@ -136,9 +136,9 @@ def tabbed_layout():
     setup_generate_yaml()
 
 ## EXPORT TO YAML
-def input_to_yaml():
+def input_to_json():
     # create dict
-    spec = { "openapi" : "3.0.0" }
+    spec = { "openapi" : "3.0.0", "dataDescVersion" : "1.0" }
 
     # fill info with input
     sinfo = {}
@@ -157,7 +157,10 @@ def input_to_yaml():
                 if w.id in ["identifier", "title", "description", "contact", "license", "version", "codeRepository",
                             "programmingLanguages", "downloadUrl", "authors", "copyrightHolders", "copyrightYear",
                             "datePublished", "keywords", "funders", "fundings", "reference_publication", "readme"]:
-                    sinfo |= w.get_json()
+                    w_json = w.get_json()
+                    w_json = { k : v for k,v in w_json.items() if v }
+                    
+                    sinfo |= w_json
                 #output.value += f"{str( w.id )}({str(type(w).__name__)}) : { w.get_widget().value } \n"
 
             elif isinstance(w, (ContactWidget, 
@@ -166,23 +169,33 @@ def input_to_yaml():
                               OrganizationWidget, 
                               ScholarlyArticle)):
                 if w.id in ["contact", "license", "authors", "copyrightHolders", "funders"]:
+                    w_json = w.get_json()
+                    w_json = { k : v for k,v in w_json.items() if v }
+
                     sinfo[w.id] = {}
-                    sinfo[w.id] = w.get_json()
+                    sinfo[w.id] = w_json
 
             elif isinstance(w, ORWidget):
                 output.value += "OR"
                 try:
-                    output.value += str( w.get_json() ) + "\n"
+                    w_json = w.get_json()
+                    w_json = { k : v for k,v in w_json.items() if v }
+                    sinfo[w.id] = w_json[w.id]
+                    #output.value += str( w_json ) + "\n"
                 except Exception as e:
                     output.value += str(e)
             
             elif isinstance(w, ArrayWidget):
                 try:
-                    sinfo[w.id] = w.get_json()
+                    w_json = w.get_json()
+                    w_json = { k : v for k,v in w_json.items() if v }
+                    sinfo[w.id] = w_json[w.id]
                 except Exception as e:
                     output.value += str(e)
     except Exception as e:
         output.value = str(e)
+
+    sinfo = { k : v for k,v in sinfo.items() if v }
     
     spec["info"] = sinfo
     output.value = str(spec)
@@ -193,7 +206,7 @@ def input_to_yaml():
 
 def on_button_clicked(b):
     global meta_file
-    input_to_yaml()
+    input_to_json()
     display(meta_file)
 
 

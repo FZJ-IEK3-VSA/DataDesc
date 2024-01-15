@@ -27,7 +27,7 @@ Afterwards, generate and download your metadata file using the `generate meta.js
 
 ### Technical information about a software interface
 
-To allow for maximum robustness against user error, we propose a new non-invasive way of annotating software interfaces by leveraging Python's typing.Annotated for type hint checking. This method does not require any external packages or installation and can be performed simply by running the `generator_annotated.py` script in `Python\openapi-generator` folder.
+To allow for maximum robustness against user error, we propose a new non-invasive way of annotating software interfaces by leveraging Python's typing.Annotated for type hint checking. This method does not require any external packages or installation and can be performed simply by running the `generator_annotated.py` script in `datadesc-generator` folder.
 
 _Usage_
 
@@ -44,11 +44,11 @@ Here, `Annotated` takes two arguments. The first argument is the base type (`flo
 
 This allows you to provide additional information about the variable's intended usage, special constraints, or any other relevant details.
 
-_Using the parser to create OpenAPI-conform YAML_
+_Using the parser to create DataDesc-conform JSON_
 
 After annotating your code, you may parse its information into a standardized YAML file using our dedicated parser (`generator_annotated.py`).
 
-Navigate to `Python\openapi-generator` and use it as follows:
+Navigate to `datadesc-generator` and use it as follows:
 ```
 python -m generator_annotated -m <FILE_TO_PARSE> -o <OUTPUT_FILE_NAME>
 ```

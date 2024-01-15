@@ -13,7 +13,7 @@ The framework for machine-actionable Software Metadata combines four distinct py
 
 ## Installation
 The ecosystem can be installed directly via git - this will preserve the connection to the GitHub repository:
-```console
+```bash
 	git clone https://github.com/FZJ-IEK3-VSA/DataDesc
 ```
 

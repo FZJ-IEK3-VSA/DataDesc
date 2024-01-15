@@ -1,6 +1,4 @@
 from __future__ import annotations
-from dataclasses import dataclass, field
-from dataclasses_json import dataclass_json  # type: ignore
 from typing import List, Optional, Any, Dict
 from enum import Enum
 
@@ -122,10 +120,6 @@ class HouseholdKeyType(str, Enum):
     General = "General"
     House = "House"
 
-
-# noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
 class StrGuid:
     StrVal: Optional[str] = ""
 
@@ -135,8 +129,7 @@ class StrGuid:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class TransportationPreference:
     DestinationSite: Optional[JsonReference] = None
 
@@ -156,7 +149,7 @@ class TransportationPreference:
         self.Angle = value
         return self
 
-    TransportationDeviceCategories: List[JsonReference] = field(default_factory=list)
+    TransportationDeviceCategories: List[JsonReference] = []
 
     def set_TransportationDeviceCategories(
         self, value: List[JsonReference]
@@ -164,7 +157,7 @@ class TransportationPreference:
         self.TransportationDeviceCategories = value
         return self
 
-    Weights: List[float] = field(default_factory=list)
+    Weights: List[float] = []
 
     def set_Weights(self, value: List[float]) -> TransportationPreference:
         self.Weights = value
@@ -172,8 +165,7 @@ class TransportationPreference:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class PersonData:
     Age: int = 0
 
@@ -199,9 +191,7 @@ class PersonData:
         self.PersonName = value
         return self
 
-    TransportationPreferences: List[TransportationPreference] = field(
-        default_factory=list
-    )
+    TransportationPreferences: List[TransportationPreference] = []
 
     def set_TransportationPreferences(
         self, value: List[TransportationPreference]
@@ -211,8 +201,7 @@ class PersonData:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class JsonReference:
     Name: Optional[str] = ""
 
@@ -228,8 +217,7 @@ class JsonReference:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class TransportationDistanceModifier:
     RouteKey: Optional[str] = ""
 
@@ -251,8 +239,7 @@ class TransportationDistanceModifier:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class JsonCalcSpecification:
     """
     :param LoadtypesForPostprocessing: List of all load types to process in
@@ -357,7 +344,7 @@ class JsonCalcSpecification:
     :type EnableIdlemode: bool
     """
 
-    LoadtypesForPostprocessing: List[str] = field(default_factory=list)
+    LoadtypesForPostprocessing: List[str] = []
 
     def set_LoadtypesForPostprocessing(self, value: List[str]) -> JsonCalcSpecification:
         self.LoadtypesForPostprocessing = value
@@ -369,7 +356,7 @@ class JsonCalcSpecification:
         self.CalculationName = value
         return self
 
-    CalcOptions: List[CalcOption] = field(default_factory=list)
+    CalcOptions: List[CalcOption] = []
 
     def set_CalcOptions(self, value: List[CalcOption]) -> JsonCalcSpecification:
         self.CalcOptions = value
@@ -503,8 +490,7 @@ class JsonCalcSpecification:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class HouseReference:
     House: Optional[JsonReference] = None
 
@@ -514,16 +500,15 @@ class HouseReference:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class HouseholdDataPersonSpecification:
-    Persons: List[PersonData] = field(default_factory=list)
+    Persons: List[PersonData] = []
 
     def set_Persons(self, value: List[PersonData]) -> HouseholdDataPersonSpecification:
         self.Persons = value
         return self
 
-    HouseholdTags: List[str] = field(default_factory=list)
+    HouseholdTags: List[str] = []
 
     def set_HouseholdTags(self, value: List[str]) -> HouseholdDataPersonSpecification:
         self.HouseholdTags = value
@@ -531,8 +516,7 @@ class HouseholdDataPersonSpecification:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class PersonLivingTag:
     LivingPatternTag: Optional[str] = ""
 
@@ -548,10 +532,9 @@ class PersonLivingTag:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class HouseholdTemplateSpecification:
-    Persons: List[PersonLivingTag] = field(default_factory=list)
+    Persons: List[PersonLivingTag] = []
 
     def set_Persons(
         self, value: List[PersonLivingTag]
@@ -565,7 +548,7 @@ class HouseholdTemplateSpecification:
         self.HouseholdTemplateName = value
         return self
 
-    ForbiddenTraitTags: List[str] = field(default_factory=list)
+    ForbiddenTraitTags: List[str] = []
 
     def set_ForbiddenTraitTags(
         self, value: List[str]
@@ -575,8 +558,7 @@ class HouseholdTemplateSpecification:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class HouseholdNameSpecification:
     HouseholdReference: Optional[JsonReference] = None
 
@@ -588,8 +570,7 @@ class HouseholdNameSpecification:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class HouseholdData:
     HouseholdDataPersonSpec: Optional[HouseholdDataPersonSpecification] = None
 
@@ -645,7 +626,7 @@ class HouseholdData:
 
     TransportationDistanceModifiers: Optional[
         List[TransportationDistanceModifier]
-    ] = field(default_factory=list)
+    ] = []
 
     def set_TransportationDistanceModifiers(
         self, value: List[TransportationDistanceModifier]
@@ -663,8 +644,7 @@ class HouseholdData:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class HouseData:
     Name: Optional[str] = ""
 
@@ -678,7 +658,7 @@ class HouseData:
         self.HouseGuid = value
         return self
 
-    Households: List[HouseholdData] = field(default_factory=list)
+    Households: List[HouseholdData] = []
 
     def set_Households(self, value: List[HouseholdData]) -> HouseData:
         self.Households = value
@@ -704,8 +684,7 @@ class HouseData:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class HouseCreationAndCalculationJob:
     """
     :param PathToDatabase: Path to the database file to use. Defaults to
@@ -767,8 +746,7 @@ class HouseCreationAndCalculationJob:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class SingleDeviceProfile:
     Name: Optional[str] = ""
 
@@ -782,7 +760,7 @@ class SingleDeviceProfile:
         self.Guid = value
         return self
 
-    TagsBySet: Dict[str, str] = field(default_factory=dict)
+    TagsBySet: Dict[str, str] = {}
 
     def set_TagsBySet(self, value: Dict[str, str]) -> SingleDeviceProfile:
         self.TagsBySet = value
@@ -796,8 +774,7 @@ class SingleDeviceProfile:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class TemplatePersonEntry:
     Age: int = 0
 
@@ -837,8 +814,7 @@ class TemplatePersonEntry:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class HouseholdKey:
     Key: Optional[str] = ""
 
@@ -848,8 +824,7 @@ class HouseholdKey:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class LoadTypeInformation:
     ConversionFaktor: float = 0
 
@@ -895,8 +870,7 @@ class LoadTypeInformation:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class HouseholdKeyEntry:
     HouseDescription: Optional[str] = ""
 
@@ -936,8 +910,7 @@ class HouseholdKeyEntry:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class JsonSumProfile:
     Name: Optional[str] = ""
 
@@ -951,7 +924,7 @@ class JsonSumProfile:
         self.TimeResolution = value
         return self
 
-    Values: List[float] = field(default_factory=list)
+    Values: List[float] = []
 
     def set_Values(self, value: List[float]) -> JsonSumProfile:
         self.Values = value
@@ -989,10 +962,9 @@ class JsonSumProfile:
 
 
 # noinspection PyPep8Naming, PyUnusedLocal
-@dataclass_json
-@dataclass
+
 class JsonDeviceProfiles:
-    DeviceProfiles: List[SingleDeviceProfile] = field(default_factory=list)
+    DeviceProfiles: List[SingleDeviceProfile] = []
 
     def set_DeviceProfiles(
         self, value: List[SingleDeviceProfile]

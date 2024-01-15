@@ -1,0 +1,2 @@
+notebook
+jupyter_server

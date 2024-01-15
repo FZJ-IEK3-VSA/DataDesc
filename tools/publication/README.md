@@ -30,7 +30,7 @@ Executing the `github_pub.sh` script requires to have filled in `$TITLE`, `$DESC
 The script `readthedocs_pub.sh` is dependant on the variables `$TITLE`, `$CONTACT_NAME`, `$VERSION`, `$REPOSITORY`, and `$RTD_AUTH` of the `config.sh` file. It sets up a rudimentary Sphinx documentation for a Python project, creating or updating the project on ReadTheDocs and triggering the documentation build. The information for the project is sourced from the configuration file.
 
 ### SwaggerHub
-The `swaggerhub_push.sh` file takes the metadata sheet (`$YAML_URL`) in its entirety and uploads it to `swaggerhub.com` using the user's credentials (`$SWAGGER_USER`, `$SWAGGER_AUTH`) under the name `$TITLE` configured in `config.sh`.
+The `swaggerhub_push.sh` file takes the metadata sheet (`$YAML_URL`) in its entirety and uploads it to `swaggerhub.com` using the user's credentials (`$SWAGGER_USER`, `$SWAGGER_AUTH`) under the name `$TITLE` configured in `config.sh`. Note that publishing the DataDesc metadata sheet on SwaggerHub is bound to yield errors, as DataDesc is largely inspired by `OpenAPI` but not entirely compatible with it.
 
 ### Open Research Knowledge Graph (ORKG)
 Uploading to `Open Research Knowledge Graph` is more complex. For now, `filename`, `orkg hostname` and `username` have to be changed in the `orkg_uploader.py` script itself (line 118ff.) The script then parses information from the provided file and restructures it in a way that is fit for the `ORKG` using a template provided by the `orkg_connector` class. The upload itself is also handled through the `orkg_connector`. 

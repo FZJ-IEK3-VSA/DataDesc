@@ -1,187 +1,197 @@
-import yaml
-import os
+import os, json, copy
+from deepdiff import DeepDiff
+import re
 
 FILES_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'files')
 
-def load_yaml_as_dict(_path):
-    yaml_dict = {}
-    with open(_path, 'r') as fstream:
-        try:
-            content = yaml.safe_load(fstream)
-            yaml_dict = content
-        except yaml.YAMLError as exc:
-            print(exc)
-    return yaml_dict
+def version_check(j1, j2):
+    """
+    Checks if the versions of two JSON objects match for specified keys.
 
-def __pretty_print_dict(_dict):
-    import json
-    print(json.dumps(_dict, indent=2))
+    Parameters:
+    - j1 (dict): The first JSON object (primarily technical information).
+    - j2 (dict): The second JSON object (general information).
 
-def version_check(y1, y2):
-    y1_ver = y1["openapi"]
-    y2_ver = y2["openapi"]
+    Returns:
+    - None
 
-    if y1_ver == y2_ver:
-        return True
+    Raises:
+    - ValueError: If the versions for the specified keys do not match.
+    """
+    matching_keys = ["openapi", "dataDescVersion"]
+    for mk in matching_keys:
+        if j1[mk] != j2[mk]:
+            raise ValueError(f"Encountered version mismatch: {j1[mk]}/{j2[mk]} ({mk})")
+    return True
+
+def update_at_path(j_dict : dict, key_path : list[str], updated_value, build_path=False):
+    """
+    Updates the value at the specified nested path in a dictionary.
+
+    Parameters:
+    - j_dict (dict): The input dictionary.
+    - key_path (list[str]): A list of keys forming the nested path.
+    - updated_value (Any): The new value to set at the specified path.
+    - build_path (bool, optional): If True, creates missing keys along the path.
+
+    Returns:
+    - None
+
+    Raises:
+    - ValueError: If a key in the path is not found in the dictionary and build_path is False.
+    """
+    current_dict = j_dict
+    
+    for key in key_path[:-1]:
+        if key in current_dict:
+            current_dict = current_dict[key]
+        else:
+            if not build_path:
+                raise ValueError(f"Key {key} not found in {current_dict}")
+            current_dict[key] = {}
+            current_dict = current_dict[key]
+    
+    last_key = key_path[-1]
+    if updated_value == None:
+        current_dict.pop(last_key)
+        return
+    current_dict[last_key] = updated_value
+
+def get_at_path(j_dict : dict, key_path : list[str]):
+    """
+    Retrieves the value at the specified nested path in a dictionary.
+
+    Parameters:
+    - j_dict (dict): The input dictionary.
+    - key_path (list[str]): A list of keys forming the nested path.
+
+    Returns:
+    - Any: The value found at the specified path.
+
+    Raises:
+    - ValueError: If any key in the path is not found in the dictionary.
+    """
+    current_dict = j_dict
+    
+    for key in key_path[:-1]:
+        if key in current_dict:
+            current_dict = current_dict[key]
+        else:
+            raise ValueError(f"Key {key} not found in {current_dict}")
+    
+    last_key = key_path[-1]
+    return current_dict[last_key]
+
+def merge_schemas(j1, j2, override=False):
+    """
+    Merges two JSON schemas with the option to override specific fields.
+
+    Parameters:
+    - j1 (dict): The first JSON schema.
+    - j2 (dict): The second JSON schema.
+    - override (bool, optional): If True, overrides specific fields from j1 with corresponding fields from j2.
+
+    Returns:
+    - dict: The merged JSON schema.
+    """
+    if override:
+        override_fields = ["externalDocs", "info"]
+        for of in override_fields:
+            if not of in j2: continue
+            j1[of] = copy.deepcopy(j2[of])
     else:
-        raise ValueError("Encountered version mismatch: {}/{}".format(y1_ver, y2_ver))
+        merge_fields = ["externalDocs", "info"]
+        j1_snippet = copy.deepcopy(j1)
+        j1_snippet = { k : j1_snippet[k] for k in merge_fields if k in j1_snippet }
 
-def get_dict_key_intersection(d1, d2):
-    d1_keys = list(d1.keys())
-    d2_keys = list(d2.keys())
+        j2_snippet = copy.deepcopy(j2)
+        j2_snippet = { k : j2_snippet[k] for k in merge_fields if k in j2_snippet }
 
-    intersecting_keys = list(set(d1_keys) & set(d2_keys))
+        ddiff = DeepDiff(j1_snippet, j2_snippet)
 
-    return intersecting_keys
+        pattern = re.compile(r"'([^']+)'")
+        for k,v in ddiff.get("values_changed").items():
+            acc_value = input(
+                    """Field {} is ambiguous; which value to accept?
+        #-- {} (1 - default)
+        #-- {} (2 - new)
+            >> """.format(k,v["old_value"],v["new_value"]))
+            if acc_value not in ["1","2"]:
+                acc_value = "1"
 
-def merge_schemas(y1, y2):
-    y1_schemas = y1["components"]["schemas"]
-    y2_schemas = y2["components"]["schemas"]
+            if acc_value == "2":
+                matches = pattern.findall(k)
+                update_at_path( j1_snippet, matches, v["new_value"] )
 
-    intersecting_keys = get_dict_key_intersection(y1_schemas, y2_schemas)
+        for item in ddiff.get("dictionary_item_added"):
+            matches = pattern.findall(item)
+            new_value = get_at_path(j2_snippet, matches)
+            update_at_path( j1_snippet, matches, new_value, build_path=True )
 
-    # merged schema; can be thought of as 'y3'
-    ret_schemas = {}
-
-    for schema in intersecting_keys:
-        y1_schema = y1_schemas[schema]
-        y2_schema = y2_schemas[schema]
-
-        ## ret_schemas[schema] = ...
-        ret_schema_fields = {}
-
-        # - type
-        # semantically-critical fields are compared here; 
-        # e.g. type must always be the same between both objects
-        must_match_fields = ["type",]
-        for mm in must_match_fields:
-            if mm in y1_schema and mm in y2_schema:
-                val1 = y1_schema[mm]
-                val2 = y2_schema[mm]
-                if val1 != val2:
-                    ret_schema_fields[mm] = 'NIL'
-                    print("Mismatch in must-match field: {} ({}/{}); 'NIL' placed.".format(mm, val1, val2))
-                else:
-                    ret_schema_fields[mm] = val1
-                    print("Matching {}!".format(mm))
+        for item in ddiff.get("dictionary_item_removed"):
+            matches = pattern.findall(item)
+            print(item, matches)
+            acc_value = input(
+                    """Field {} is removed in new version; which value to accept?
+        #-- {} (1 - default)
+        #-- [REMOVE] (2 - new)
+            >> """.format(item,get_at_path(j1_snippet, matches)))
+            if acc_value not in ["1","2"]:
+                acc_value = "1"
+            if acc_value == "2":
+                update_at_path( j1_snippet, matches, None )
         
-        # - description
-        # not-so-critical fields are compared here;
-        # usually descriptive text
-        ask_override_fields = ["description",]
-        for ov in ask_override_fields:
-            if ov in y1_schema and ov in y2_schema:
-                val1 = y1_schema[ov]
-                val2 = y2_schema[ov]
-                if val1 != val2:
-                    acc_value = input(
-                        """Field '{}' is ambiguous; which value to accept?
-        #-- {} (1)
-        #-- {} (2)
-        """.format(ov,val1,val2))
-                    if acc_value not in ["1","2"]:
-                        acc_value = "1"
-                    
-                    ret_schema_fields[ov] = val1 if acc_value=="1" else val2
-                else:
-                    ret_schema_fields[ov] = val1
-            else:
-                if ov in y1_schema:
-                    ret_schema_fields[ov] = y1_schema[ov]
-                if ov in y2_schema:
-                    ret_schema_fields[ov] = y2_schema[ov]
-
-        # - properties
-        # properties are merged here
-        ret_schema_fields_properties = {}
-        property_intersections = get_dict_key_intersection(y1_schema["properties"], y2_schema["properties"])
-
-        ret_schema_fields_properties = {}
-        for pi in property_intersections:
-            # semantically-critical fields are compared here; 
-            # e.g. type must always be the same between both objects
-            must_match_fields = ["type","$ref"]
-            for mm in must_match_fields:
-                if mm in y1_schema["properties"][pi] and mm in y2_schema["properties"][pi]:
-                    val1 = y1_schema["properties"][pi][mm]
-                    val2 = y2_schema["properties"][pi][mm]
-                    ret_schema_fields_properties[pi] = {}
-                    if val1 != val2:
-                        ret_schema_fields_properties[pi][mm] = 'NIL'
-                        print("Mismatch in must-match field: {} ({}/{}); 'NIL' placed.".format(mm, val1, val2))
-                    else:
-                        ret_schema_fields_properties[pi][mm] = val1
-                        print("Matching {}!".format(mm))
-
-            # x-attributes are compared here;
-            for x in [ i for i in y1_schema["properties"][pi] if i.startswith('x-')]:
-                val1 = y1_schema["properties"][pi][x]
-                val2 = y2_schema["properties"][pi][x]
-                if val1 != val2:
-                    acc_value = input(
-                    """Field '{}' is ambiguous; which value to accept?
-        #-- {} (1)
-        #-- {} (2)
-            """.format(x,val1,val2))
-                    if acc_value not in ["1","2"]:
-                        acc_value = "1"
-                    
-                    ret_schema_fields_properties[pi][x] = val1 if acc_value=="1" else val2
-                else:
-                    ret_schema_fields_properties[pi][x] = val1
-        # ...
-
-        y1_schema_properties_set = set(list(y1_schema["properties"].keys()))
-        y2_schema_properties_set = set(list(y2_schema["properties"].keys()))
-        for property in list( y1_schema_properties_set - set(property_intersections) ):
-            ret_schema_fields_properties[property] = y1_schema["properties"][property]
+        new_j1 = copy.deepcopy(j1)
         
-        for property in list( y2_schema_properties_set - set(property_intersections) ):
-            ret_schema_fields_properties[property] = y2_schema["properties"][property]
+        for k,v in j1_snippet.items():
+            new_j1[k] = v
 
-        ret_schema_fields["properties"] = ret_schema_fields_properties
+        return new_j1
 
-        # - required; - enum are represented as lists in JSON-notation
-        # list merges
-        list_merges = ["required", "enum"]
-        for lim in list_merges:
-            ret_schema_fields_list = []
-            do_add_lim_to_fields = False
-            if lim in y1_schema:
-                do_add_lim_to_fields = True
-                for req in y1_schema[lim]:
-                    ret_schema_fields_list.append(req)
-            if lim in y2_schema:
-                do_add_lim_to_fields = True
-                for req in y2_schema[lim]:
-                    ret_schema_fields_list.append(req)
-            if do_add_lim_to_fields:
-                ret_schema_fields[lim] = ret_schema_fields_list
-        
-        ret_schemas[schema] = ret_schema_fields
+def merge_files(j1_path, j2_path, out):
+    """
+    Merges two JSON files and writes the result to a new file.
 
-    for schema in list( set(list(y1_schemas.keys())) - set(intersecting_keys) ):
-        ret_schemas[schema] = y1_schemas[schema]
+    Parameters:
+    - j1_path (str): The path to the first JSON file.
+    - j2_path (str): The path to the second JSON file.
+    - out (str): The path to the output file.
 
-    for schema in list( set(list(y2_schemas.keys())) - set(intersecting_keys) ):
-        ret_schemas[schema] = y2_schemas[schema]
+    Returns:
+    - None
+    """
+    j1 = json.load( open(j1_path) )
+    j2 = json.load( open(j2_path) )
 
-    return ret_schemas
+    if version_check(j1,j2):
+        schema = merge_schemas(j1,j2)
+
+    with open(out, 'w+') as f:
+        json.dump(schema, f, indent=4)
 
 
-def merge_yaml_files(yaml1_path, yaml2_path):
-    y1 = load_yaml_as_dict(yaml1_path)
-    y2 = load_yaml_as_dict(yaml2_path)
+def parse_arguments():
+    """
+    Parses command line arguments.
 
-    __pretty_print_dict(y2)
+    Returns:
+    - argparse.Namespace: An object containing parsed command line arguments.
+    """
+    from argparse import ArgumentParser
 
-    if(version_check(y1,y2)):
-        y3 = merge_schemas(y1,y2)
-        __pretty_print_dict(y3)
+    parser = ArgumentParser()
 
-def main():
-    y1_path = os.path.join(FILES_PATH,'minimal_xattr.yaml')
-    y2_path = os.path.join(FILES_PATH,'addition.yaml')
-    merge_yaml_files(yaml1_path=y1_path, yaml2_path=y2_path)
+    parser.add_argument("-f1", "--file_main", help="Main metadata file (to merge into)", required=True)
+    parser.add_argument("-f2", "--file_general", help="General metadata file", required=True)
+    parser.add_argument("-o", "--output", help="Output file", default="merged.json", required=False)
 
-main()
+    return parser.parse_args()
+
+if __name__ == '__main__':
+    args = vars(parse_arguments())
+
+    j1_path = os.path.join(FILES_PATH,args["file_main"]) # primarily technical metadata
+    j2_path = os.path.join(FILES_PATH,args["file_general"]) # general metadata
+    out_path = os.path.join(FILES_PATH,args["output"])
+
+    merge_files(j1_path=j1_path, j2_path=j2_path, out=out_path)

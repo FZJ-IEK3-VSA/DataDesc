@@ -1,4 +1,5 @@
 import ipywidgets as widgets
+import datetime
 
 fullWidthLayout = widgets.Layout(width="auto", height="auto")
 style_kwargs = { 'layout' : fullWidthLayout, 'style' : {'description_width': 'initial'} }
@@ -89,7 +90,7 @@ class DictObject(object):
         return (self.id, self.w.value)
     
     def get_json(self):       
-        widget_json = { label_to_prop(child.description) : child.value for child in self.children if not isinstance(child, widgets.HTML) }
+        widget_json = { label_to_prop(child.description) : child.value for child in self.children if not isinstance(child, widgets.HTML) and child.value }
         return widget_json
 
     def get_widget(self):
@@ -114,7 +115,7 @@ class TextWidget(object):
         return self.w
     
     def get_json(self):
-        return { self.id : self.w.value }
+        return { self.id : self.w.value } if self.w.value else {}
     
 class DatePickerWidget(object):
     def __init__(self, desc, id, **style_kwargs):
@@ -134,7 +135,10 @@ class DatePickerWidget(object):
         return self.w
     
     def get_json(self):
-        return { self.id : self.w.value }
+        if self.w.value is None: return {}
+        
+        datetime_obj = datetime.datetime.combine(self.w.value, datetime.time())
+        return { self.id : datetime_obj.strftime("%Y-%m-%d") }
 
 class ContactWidget(object):
     def __init__(self, id):
@@ -374,6 +378,8 @@ class ORWidget(object):
         return self.w
     
     def get_json(self):
+        return { "a" : "b" }
+        return { self.active_option.id : self.active_option.get_json() }
         return self.w.children[2].get_json()
     
 class ArrayWidget(object):
@@ -388,7 +394,9 @@ class ArrayWidget(object):
         def on_btn_clicked(arg):
             new_instance = ArrayWidget.create_instance( of )
             self.instance_list += [ new_instance ]
-            of_list.children = list( of_list.children[:-1] ) + [widgets.HTML("<hr>")] + [ new_instance.get_widget() ] + [ btn_expand ]
+            #of_list.children = list( of_list.children[:-1] ) + [widgets.HTML("<hr>")] + [ new_instance.get_widget() ] + [ btn_expand ]
+            of_list.children = list( of_list.children[:-1] ) + [ new_instance.get_widget() ] + [ btn_expand ]
+
 
         btn_expand.on_click( on_btn_clicked )
 
@@ -428,8 +436,10 @@ class ArrayWidget(object):
                 elif isinstance( c, (widgets.Text, widgets.Textarea, widgets.DatePicker) ):
                     widget_json[ label_to_prop(c.description) ] = c.value
 
+        widget_json = { k : v for k,v in widget_json.items() if v }
         return widget_json
     
     def get_json(self):
-        json_list = [ ArrayWidget.__get_json(child) for child in self.w.children[:-1] if not isinstance(child, (widgets.HTML, widgets.Button)) ]           
-        return json_list
+        json_list = [ ArrayWidget.__get_json(child) for child in self.w.children[:-1] ]           
+        json_list = [ j for j in json_list if j ]
+        return { self.id :  json_list }

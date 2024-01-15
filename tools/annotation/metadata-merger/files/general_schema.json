@@ -1,0 +1,45 @@
+{
+    "openapi": "3.0.0",
+    "dataDescVersion" : "1.0",
+    "externalDocs" : [ {"title" : "API Spec"} ],
+    "info": {
+        "identifier": "mySoftware1-1",
+        "description": "Diese SW is voll toll",
+        "license": {
+            "name": "mit",
+            "identifier": "mit"
+        },
+        "version": "1.1",
+        "codeRepository": "github.com",
+        "programmingLanguages": "Python",
+        "authors": [
+            {
+                "identifier": "j123",
+                "givenName": "julian",
+                "familyName": "sch\u00f6nau"
+            },
+            {
+                "identifier": "p123",
+                "givenName": "Patrick",
+                "familyName": "Kuckertz",
+                "honorificPrefix": "Dr.-Ing."
+            }
+        ],
+        "copyrightHolders": [
+            {
+                "legalName": "FZJ"
+            }
+        ],
+        "copyrightYear": "2024",
+        "datePublished": "2024-01-15",
+        "keywords": "cool, money",
+        "funders": [
+            {
+                "identifier": "sad"
+            },
+            {
+                "legalName": "fzj"
+            }
+        ]
+    }
+}

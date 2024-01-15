@@ -4,6 +4,7 @@ import inspect
 import importlib
 import json
 import copy
+import os
 
 class DataModel(object):
     """
@@ -571,6 +572,12 @@ class Generator(object):
         if not filename.endswith(file_extension):
             filename += file_extension
 
+        #file_dir = os.path.dirname(filename)
+        #if not os.path.exists(file_dir):
+        #    os.makedirs(file_dir)
+            
+        filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), filename)
+
         with open(filename, "w+") as dd_file:
             dd_file.write( json.dumps(
                     definition,
@@ -758,8 +765,8 @@ def parse_arguments():
 
     parser = ArgumentParser()
 
-    parser.add_argument("-m", "--module", help="python module to generate OpenAPI document from", required=True)
-    parser.add_argument("-o", "--out", help="OpenAPI output filename", required=True)
+    parser.add_argument("-m", "--module", help="python module to generate DataDesc document from", required=True)
+    parser.add_argument("-o", "--out", help="DataDesc output filename", required=True)
 
     return parser.parse_args()
 
@@ -767,7 +774,7 @@ if __name__ == '__main__':
     import importlib
     generator = Generator()
 
-    args = parse_arguments()
+    args = vars(parse_arguments())
     to_json = True
     output_fname = args["out"]#'Examples_Annotated/minimal_xattr.json' 
     import_mod = importlib.import_module(args["module"])#importlib.import_module('Examples_Annotated.minimal_xattr')

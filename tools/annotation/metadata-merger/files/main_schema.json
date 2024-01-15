@@ -1,0 +1,217 @@
+{
+    "dataDescVersion": "1.0",
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Spec",
+        "version": "1.0.0",
+        "contact" : {
+            "name": "John Doe"
+        }
+    },
+    "apiFunctions": [
+        {
+            "identifier": "MyMonetaryClass.moneyFunction",
+            "inputVariables": [
+                {
+                    "identifier": "x",
+                    "required": true,
+                    "dataSchema": {
+                        "type": "float",
+                        "properties": [
+                            {
+                                "identifier": "currency",
+                                "type": "str",
+                                "default": "EUR"
+                            },
+                            {
+                                "identifier": "toUSD",
+                                "type": "float",
+                                "default": 1.2
+                            }
+                        ]
+                    }
+                }
+            ],
+            "outputVariables": [
+                {
+                    "identifier": "return",
+                    "required": true,
+                    "dataSchema": {
+                        "type": "float",
+                        "properties": [
+                            {
+                                "identifier": "currency",
+                                "type": "str",
+                                "default": "USD"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "variables": [
+        {
+            "identifier": "Id",
+            "required": true,
+            "dataSchema": {
+                "type": "integer"
+            }
+        },
+        {
+            "identifier": "Text",
+            "required": false,
+            "dataSchema": {
+                "type": "string"
+            }
+        },
+        {
+            "identifier": "MyFloat",
+            "required": true,
+            "dataSchema": {
+                "type": "float"
+            }
+        },
+        {
+            "identifier": "MyInt",
+            "required": true,
+            "dataSchema": {
+                "type": "integer"
+            }
+        },
+        {
+            "identifier": "MyString",
+            "required": true,
+            "dataSchema": {
+                "type": "string"
+            }
+        },
+        {
+            "identifier": "MyEnumValue",
+            "required": true,
+            "dataSchema": {
+                "type": "object"
+            }
+        },
+        {
+            "identifier": "MyOptionalString",
+            "required": false,
+            "dataSchema": {
+                "type": "string"
+            }
+        },
+        {
+            "identifier": "MySubObject",
+            "description": "This is a simple example class",
+            "required": true,
+            "dataSchema": {
+                "type": "object",
+                "properties": [
+                    {
+                        "identifier": "Id",
+                        "required": true,
+                        "dataSchema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "identifier": "Text",
+                        "required": false,
+                        "dataSchema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": "MyList",
+            "required": true,
+            "dataSchema": {
+                "type": "array",
+                "items": [
+                    {
+                        "type": "float"
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": "MyObjectList",
+            "required": true,
+            "dataSchema": {
+                "type": "array",
+                "items": [
+                    {
+                        "description": "This is a simple example class",
+                        "type": "object",
+                        "properties": [
+                            {
+                                "identifier": "Id",
+                                "required": true,
+                                "dataSchema": {
+                                    "type": "integer"
+                                }
+                            },
+                            {
+                                "identifier": "Text",
+                                "required": false,
+                                "dataSchema": {
+                                    "type": "string"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": "MyDictionary",
+            "required": true,
+            "dataSchema": {
+                "type": "object",
+                "items": [
+                    {
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": "MyNestedList",
+            "required": false,
+            "dataSchema": {
+                "type": "array",
+                "items": [
+                    {
+                        "type": "array",
+                        "items": [
+                            {
+                                "type": "array",
+                                "items": [
+                                    {
+                                        "type": "integer"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "identifier": "Value",
+            "required": true,
+            "dataSchema": {
+                "type": "integer"
+            }
+        },
+        {
+            "identifier": "Time",
+            "required": true,
+            "dataSchema": {
+                "type": "string"
+            }
+        }
+    ]
+}

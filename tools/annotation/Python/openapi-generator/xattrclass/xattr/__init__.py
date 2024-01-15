@@ -1,1 +1,0 @@
-from xattr import xattr
