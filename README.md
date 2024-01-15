@@ -12,7 +12,7 @@ The framework for machine-actionable Software Metadata combines four distinct py
 - a tool for uploading DataDesc compliant files to the ORKG, GitHub, PyPI, and more
 
 ## Installation
-The ecosystem can be installed directly via git - this will preserve the connection to the GitHub repository:
+The framework can be installed directly via git - this will preserve the connection to the GitHub repository:
 ```bash
 	git clone https://github.com/FZJ-IEK3-VSA/DataDesc
 ```
