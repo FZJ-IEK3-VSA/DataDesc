@@ -1073,10 +1073,8 @@ https://www.iana.org/assignments/character-sets/character-sets.xhtml; https://ww
 
 ## DataDesc Document
 
-Explaining the structure of DataDesc JSON documents.
-
-... is structured into `info` on the software in general, `components` which groups the software's functions ...
-The DataDesc vocabulary is used in the `info` and `components` section.
+A document adhering to the DataDesc standard is structured into `info` on the software in general, `apiFunctions` which groups the software's functions and additional top-level information, such as the version of DataDesc (`dataDescVersion`) and OpenAPI (`openapi`) used.
+The DataDesc vocabulary is used in the `info` and `apiFunctions` section. In particular, the `info` section contains general metadata about the software, such as the software title, a description of the software and the version of the software. `apiFunctions` is an array of different JSON-objects describing API function definitions. Each function must have a unqiue `identifier`. A `description` of the function as well as information on `inputVariables` and `outputVariables` is not required but highly recommended for clarity. Variables in both arays have a `dataSchema` property that specifies both the data type (`type`) as well as arbitrary metadata (`properties`), which in and of itself is a list of JSON objects.
 
 ## Examples
 

@@ -1,27 +1,23 @@
 <a href="https://www.fz-juelich.de/en/iek/iek-3"><img src="https://raw.githubusercontent.com/OfficialCodexplosive/README_Assets/862a93188b61ab4dd0eebde3ab5daad636e129d5/FJZ_IEK-3_logo.svg" alt="FZJ Logo" width="300px"></a>
 
-# Ecosystem for machine-actionable Software Metadata
+# Framework for machine-actionable Software Metadata
 
-Key components of the ecosystem are a metadata schema for software documentation with focus on interfaces, a machine-actionable metadata exchange format and a software  toolkit supporting the documentation, extraction and publication of software metadata.
+Key components of the framework are a metadata schema for software documentation with focus on interfaces, a machine-actionable metadata exchange format and a software toolkit supporting the documentation, extraction and publication of software metadata.
 
 ## Features
-The ecosystem for machine-actionable Software Metadata combines four distinct python software packages:
-- a form to convert general software metadata into an OpenAPI compliant YAML file
-- a parser for extracting extensive metadata information from python source code to OpenAPI compliant YAML
-- a tool for combining two OpenAPI compliant YAML files into a single one
-- a tool for uploading OpenAPI compliant files to the ORKG
+The framework for machine-actionable Software Metadata combines four distinct python software packages:
+- a form to convert general software metadata into a DataDesc compliant JSON file
+- a parser for extracting extensive metadata information from python source code to DataDesc compliant JSON
+- a tool for combining two DataDesc compliant JSON files into a single one
+- a tool for uploading DataDesc compliant files to the ORKG, GitHub, PyPI, and more
 
 ## Installation
 The ecosystem can be installed directly via git - this will preserve the connection to the GitHub repository:
 ```console
-	git clone https://github.com/FZJ-IEK3-VSA/some-pipeline
+	git clone https://github.com/FZJ-IEK3-VSA/DataDesc
 ```
 
-Then install it via python as follows
-```console
-	cd some-pipeline
-	python -m pip install -e .
-```
+Most parts of this framework are out-of-the-box solutions which do not need to be installed. For others, a proper installation and usage instruction is provided alongside the files themselves.
 
 ## License
 

@@ -23,46 +23,40 @@ Navigate to the `general-metadata-form` usind the command line and execute `jupy
 
 In your browser, access the notebook titled `GeneralMetadataCollectorTabbed.ipynb` and fill in your information.
 
-Afterwards, generate and download your metadata file using the `generate meta.yaml` button underneath the form.
+Afterwards, generate and download your metadata file using the `generate meta.json` button underneath the form.
 
 ### Technical information about a software interface
 
-To allow for maximum robustness against user error, we propose a new way of annotating software interfaces by leveraging Python decorators.
-
-_Installation_
-
-Install it, by navigating to the `xattrclass` folder under `Python\openapi-generator` and executing
-```
-pip install -e .
-```
-on the command line.
+To allow for maximum robustness against user error, we propose a new non-invasive way of annotating software interfaces by leveraging Python's typing.Annotated for type hint checking. This method does not require any external packages or installation and can be performed simply by running the `generator_annotated.py` script in `Python\openapi-generator` folder.
 
 _Usage_
 
-In your code, import it by adding the following line at the top
+In Python, `typing.Annotated` is used to add metadata or annotations to type hints. It allows a user to attach additional information to a type hint, which is then parsed by the `generator_annotated.py` script to create a DataDesc compliant metadata sheet. The inclusion of `typing.Annotated` might introduce a small amount of refactoring in existing code to fully leverage its potential but is otherwise non-destructive.
 ```
-from xattr.xattr import xattr
+# Limited information: data type and default value 
+my_price : float = 9.99
+
+# Additional context metadata
+my_price : Annotated[ float, { "currency" : "EUR", "toUSD" : 1.2 } ] = 9.99
 ```
 
-The `xattr` notation leverages the Python decorator concept to append additional information to Python objects - classes, functions, variables and parameters.
-Check out the `Examples` folder under `Python\openapi-generator` to get a gist of how to annotate even more complex data types, such as Pandas' dataframes.
+Here, `Annotated` takes two arguments. The first argument is the base type (`float` in this case), and the second argument is a dictionary containing metadata. In the example, the metadata includes two key-value pairs: `currency` with the value `EUR` and `toUSD` with the value `1.2`.
 
-In general, prefix your class definition with `@xattr(xattr=...)`, where the `xattr` parameter must be a dictionary. The keys of the dictionary refer to the object names of the class. They are case-sensitive and must match either a variable, function or parameter name as they will be ignored otherwise.
-The values of the dictionary may be given as a tuple, a list of tuples or another dictionary.
-The first tuple entry always refers to the name of the metadata you want to append to your object. The second entry realizes said attribute and may either be a single value or a dictionary if you want to break the attribute down into smaller pieces (e.g. describing *multiple* dimensions of a table).
+This allows you to provide additional information about the variable's intended usage, special constraints, or any other relevant details.
 
 _Using the parser to create OpenAPI-conform YAML_
 
-After annotating your code, you may parse its information into a standardized YAML file using our dedicated parser (`openapi_generator.py`).
+After annotating your code, you may parse its information into a standardized YAML file using our dedicated parser (`generator_annotated.py`).
 
 Navigate to `Python\openapi-generator` and use it as follows:
 ```
-python -m openapi_generator -m <FILE_TO_PARSE> -o <OUTPUT_FILE_NAME> [--json]
+python -m generator_annotated -m <FILE_TO_PARSE> -o <OUTPUT_FILE_NAME>
 ```
-The optional `--json` flag at the end creates a JSON file instead of YAML but is not compatible with the rest of the publication pipeline.
 
 ### Merging general and technical information in one DataDesc document
 
 Last but not least, the workflow needs information on both the general as well as the technical side of the software. Since the form and parser focus on two separate sections of the final metadata file - `info` and `components` - merging the two is relatively easy by appending one file's contents to the other's.
 
 ## Annotation of datasets
+
+As of now, datasets can only be manually annotated using the DataDesc schema. Refer to the [*DataDesc Schema Examples section*](https://github.com/FZJ-IEK3-VSA/DataDesc/blob/main/schema/DataDesc_schema_v1.0.md#netcdf--xarray) for details.
