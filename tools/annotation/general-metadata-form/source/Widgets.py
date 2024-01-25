@@ -63,7 +63,7 @@ class DictObject(object):
             prop_names.append(prop_name)
 
             new_child = prop_values["type"]( 
-                                    description=f"{prop_values["desc"]}", 
+                                    description=f"{prop_values['desc']}", 
                                     ref_title=prop_name, 
                                     **style_kwargs
                                 )
