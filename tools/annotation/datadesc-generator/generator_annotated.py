@@ -713,7 +713,7 @@ class Generator(object):
             except TypeError:
                 instanced_functions = None
                 
-            functions = inspect.getmembers(type_, lambda x: inspect.isfunction(x) and not inspect.isbuiltin(x) and not (x.__name__.startswith("_") or x.__name__.endswith("_")) and (x.__name__ in instanced_functions if instanced_functions else True))
+            functions = inspect.getmembers(type_, lambda x: inspect.isfunction(x) and not inspect.isbuiltin(x) and not (x.__name__.startswith("_") or x.__name__.endswith("_")) and (x.__name__ in instanced_functions if not instanced_functions is None else True))
             if functions:
                 for func_name, func in functions:
                     f_model = self.create_model(func, name=func_name)
