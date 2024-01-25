@@ -8,16 +8,50 @@ class MyMonetaryClass:
 
 class PowerOutputCalculator:
     """This is a simple calculator class"""
-    PowerMeasurement: Annotated[pd.DataFrame, {"dimensions" : {
-                                                    "location_of_measurement" : {
-                                                        "unit_type": "location", 
-                                                        "unit": "country name"
-                                                        }, 
-                                                    "time_of_measurement" : {
-                                                        "unit_type": "time", 
-                                                        "unit": "days since 1895-01-01"
+    PowerMeasurement: Annotated[pd.DataFrame, {
+                                                "dimensions" : [ 
+                                                    {
+                                                        "identifier" : "location_of_measurement",
+                                                        "properties" : 
+                                                        [
+                                                            {
+                                                                "identifier" : "location",
+                                                                "type" : "string",
+                                                                "description" : "The location of the measurement",
+                                                                "unit" : "country name"
+                                                            }
+                                                        ]
+                                                    },
+                                                    {
+                                                        "identifier" : "time_of_measurement",
+                                                        "properties" : 
+                                                        [
+                                                            {
+                                                                "identifier" : "time",
+                                                                "type" : "string",
+                                                                "description" : "The location of the measurement",
+                                                                "unit" : "days since 1895-01-01"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "properties" : {
+                                                    "identifier" : "T2M",
+                                                    "type" : "number",
+                                                    "properties" : 
+                                                    [
+                                                        {
+                                                            "identifier" : "long_name",
+                                                            "type" : "string",
+                                                            "example" : "2 meter air temperature"
                                                         }
-                                                }}]
+                                                    ],
+                                                    "unit" : "K",
+                                                    "dimensions" : [ "lat", "lon", "time" ]
+                                                }
+                                            },
+                                            
+                                        ]
 
     def subtract_value(self, minuend : Annotated[int, {"domain" : "real"}], subtrahend : Annotated[int, {"domain" : "real"}]):
         difference = minuend - subtrahend

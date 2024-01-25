@@ -42,6 +42,7 @@ class DataModel(object):
         self.desc = desc
         self.is_optional = is_optional
         self.metadata : Dict[str, object] = {}
+        self.dimensions = []
 
         self.append_metadata(kwargs)
 
@@ -58,9 +59,26 @@ class DataModel(object):
         if isinstance(obj, (list,tuple)):
             [ self.append_metadata(item) for item in obj ]
         if isinstance(obj, Dict):
-            [ self.metadata.update({k : v}) for k,v in obj.items() ]
+            for k,v in obj.items():
+                if k == "dimensions":
+                    self.append_dimension({k : v})
+                else:
+                    self.metadata.update({k : v})
+            #[ self.metadata.update({k : v}) for k,v in obj.items() ]
+                
+    def append_dimension(self, dim):
+        """
+        Appends a dimension to the data model.
 
-    def to_dict(self):
+        Parameters:
+        - dim: The dimension to be appended.
+
+        Returns:
+        - None
+        """
+        self.dimensions += dim["dimensions"]
+
+    def to_dict(self, prefix=None):
         """
         Converts the DataModel instance to a dictionary representation.
 
@@ -70,7 +88,7 @@ class DataModel(object):
         direct_schema_properties = ["semanticConcept", "format", "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum",
                                     "multipleOf", "minLength", "maxLength", "pattern", "items", "minItems", "maxItems",
                                     "uniqueItems", "unit", "quantityKind", "nullable", "enum", "default", "example", 
-                                    "mediaType", "charSet"]
+                                    "mediaType", "charSet", "properties"]
        
         dataSchema = { "type" : self.typename }
         direct_metadata = { k : v for k,v in self.metadata.items() if k in direct_schema_properties and v is not None }
@@ -84,8 +102,11 @@ class DataModel(object):
             dataSchema.update({ "properties" : property_metadata })
         dataSchema.update(direct_metadata)
 
+        if self.dimensions:
+            dataSchema.update({"dimensions" : self.dimensions})
+
         dict_ = {
-            "identifier" : self.name,
+            "identifier" : f"{prefix}.{self.name}" if prefix else self.name,
             "description" : self.desc,
             "required" : not self.is_optional,
             "dataSchema" : dataSchema
@@ -136,9 +157,16 @@ class ObjectModel(DataModel):
         """
         self.vars = []
         self.funcs = []
+        self.format = None
+        
         typename="object"
-        if "ctype" in kwargs.keys() and kwargs["ctype"]=="Any":
-            typename="*"
+        if "ctype" in kwargs.keys():
+            if kwargs["ctype"]=="Any":
+                typename="*"
+            else: 
+                typename="object"
+                self.format = kwargs["ctype"]
+            kwargs.pop("ctype", None)
 
         super().__init__(typename=typename, 
                          name=name,
@@ -146,17 +174,17 @@ class ObjectModel(DataModel):
                          desc=desc,
                          **kwargs)
 
-    def to_dict(self):
+    def to_dict(self, prefix=None):
         """
         Converts the ObjectModel instance to a dictionary representation.
 
         Returns:
         - dict: A dictionary representing the object model.
         """
-        dict_ = super().to_dict()
+        dict_ = super().to_dict(prefix=prefix)
         
-        vars = [ v.to_dict() for v in self.vars if v is not None ]
-        funcs = [ f.to_dict() for f in self.funcs if f is not None]
+        vars = [ v.to_dict(prefix=prefix) for v in self.vars if v is not None ]
+        funcs = [ f.to_dict(prefix=prefix) for f in self.funcs if f is not None]
 
         props = { v["identifier"] : v for v in vars if v is not None }
         props.update({ f["identifier"] : f for f in funcs if f is not None })
@@ -168,6 +196,8 @@ class ObjectModel(DataModel):
         dict_schema = copy.deepcopy(dict_["dataSchema"])
         if properties:
             dict_schema.update({"properties" : properties})
+        if self.format:
+            dict_schema.update({"format" : {"example" : self.format}})
         dict_["dataSchema"] = dict_schema
         
         return dict_
@@ -250,14 +280,14 @@ class ArrayModel(DataModel):
                          )#desc=desc)
         self.array_type = array_type
         
-    def to_dict(self):
+    def to_dict(self, prefix=None):
         """
         Converts the ArrayModel instance to a dictionary representation.
 
         Returns:
         - dict: A dictionary representing the array model.
         """
-        dict_ = super().to_dict()
+        dict_ = super().to_dict(prefix=prefix)
         if not "dataSchema" in dict_.keys():
             dict_["dataSchema"] = {}
 
@@ -322,14 +352,14 @@ class DictModel(DataModel):
                          is_optional=is_optional)
         self.dict_type = dict_type
 
-    def to_dict(self):
+    def to_dict(self, prefix=None):
         """
         Converts the DictModel instance to a dictionary representation.
 
         Returns:
         - dict: A dictionary representing the dictionary model.
         """
-        dict_ = super().to_dict()
+        dict_ = super().to_dict(prefix=prefix)
 
         if not "dataSchema" in dict_.keys():
             dict_["dataSchema"] = {}
@@ -550,7 +580,8 @@ class Generator(object):
     def create_datadesc_definition_file(self, 
                                    collection, 
                                    filename, 
-                                   export_to_json : bool):
+                                   export_to_json : bool,
+                                   do_export_class_vars : bool = False):
         """
         Creates a data description definition file.
 
@@ -564,7 +595,7 @@ class Generator(object):
         """
         definition = self.create_datadesc_definition(collection, 
                                                      export_to_json,
-                                                     do_export_class_vars=True)
+                                                     do_export_class_vars=do_export_class_vars)
         if definition is None:
             return
         
@@ -621,7 +652,9 @@ class Generator(object):
                 for var_model in class_model.vars:
                     var_obj = {}
                     var_obj["name"] = var_model.name
-                    definition["variables"].append(var_model.to_dict())
+                    if var_model.name == "PowerMeasurement":
+                        pass
+                    definition["variables"].append(var_model.to_dict(prefix=class_model.name))
             # Add class model functions (API Function objects) to definition
             for func_model in class_model.funcs:
                 api_function_obj = {}
@@ -666,20 +699,30 @@ class Generator(object):
             elif type_origin in datatype_dict:
                 return datatype_dict[type_origin]()
             
-            model = ObjectModel(name=model_name, is_optional=is_optional, desc=type_desc)
+            model = ObjectModel(name=model_name, is_optional=is_optional, ctype=type_name, desc=type_desc)
 
             # convert class functions to models and append to class model
-            functions = inspect.getmembers(type_, lambda x: inspect.isfunction(x) and not inspect.isbuiltin(x) and not (x.__name__.startswith("__") and x.__name__.endswith("__")) )
+            #instanced_type = type_() if inspect.isclass(type_) else type_
+            #filter_cond = lambda x : (inspect.isroutine(x[1]) and not isinstance(x[1], type(instanced_type.__init__)) ) and not inspect.isbuiltin(x[1]) and not x[0].startswith("_")
+            #functions = inspect.getmembers(instanced_type)
+            #functions = list( filter(filter_cond, functions) )
+
+            instanced_type = type_() if inspect.isclass(type_) else type_
+            instanced_functions = [ i[0] for i in inspect.getmembers(instanced_type, lambda x: inspect.isroutine(x) and not isinstance(x, type(instanced_type.__init__)) and not inspect.isbuiltin(x) and not x.__name__.startswith("_") and not x.__name__.endswith("_")) ]
+            functions = inspect.getmembers(type_, lambda x: inspect.isfunction(x) and not inspect.isbuiltin(x) and not (x.__name__.startswith("_") or x.__name__.endswith("_")) and x.__name__ in instanced_functions)
             if functions:
                 for func_name, func in functions:
                     f_model = self.create_model(func, name=func_name)
                     model.append_function(f_model)
+            del instanced_type
 
             # convert class variables to models and append to class model
             variables = inspect.getmembers(type_, lambda x: not inspect.isclass(x) and not inspect.isfunction(x) and not inspect.ismodule(x))
             variables_annotations = next((k[1] for k in variables if k[0] == "__annotations__"), None)
             if variables_annotations: 
                 for var_name, var_type in variables_annotations.items():
+                    if var_name.startswith("_") or var_name.endswith("_"):
+                        continue
                     var_model = self.create_model(type_=var_type, name=var_name)
                     model.append_variable(var_model)
             return model
@@ -767,6 +810,7 @@ def parse_arguments():
 
     parser.add_argument("-m", "--module", help="python module to generate DataDesc document from", required=True)
     parser.add_argument("-o", "--out", help="DataDesc output filename", required=True)
+    parser.add_argument("-v", "--variables", help="append to parse variables", default=False, action="store_true")
 
     return parser.parse_args()
 
@@ -774,14 +818,20 @@ if __name__ == '__main__':
     import importlib
     generator = Generator()
 
-    args = vars(parse_arguments())
     to_json = True
-    output_fname = args["out"]#'Examples_Annotated/minimal_xattr.json' 
-    import_mod = importlib.import_module(args["module"])#importlib.import_module('Examples_Annotated.minimal_xattr')
+
+    #args = vars(parse_arguments())
+    #parse_vars = args["variables"]
+    #output_fname = args["out"]
+    #import_mod = importlib.import_module(args["module"])
+
+    parse_vars = True
+    output_fname = 'Examples/annotated_complex.json' #args["out"]
+    import_mod = importlib.import_module('Examples.annotated_complex') 
     types = collect_from_module( import_mod, inspect.isclass )
     funcs = collect_from_module( import_mod, inspect.isfunction )
     fvars = collect_variables_from_module(  import_mod )
 
     collection = [ types, funcs, fvars ]
 
-    generator.create_datadesc_definition_file(collection, output_fname, to_json)
+    generator.create_datadesc_definition_file(collection, output_fname, to_json, parse_vars)
