@@ -707,9 +707,13 @@ class Generator(object):
             #functions = inspect.getmembers(instanced_type)
             #functions = list( filter(filter_cond, functions) )
 
-            instanced_type = type_() if inspect.isclass(type_) else type_
-            instanced_functions = [ i[0] for i in inspect.getmembers(instanced_type, lambda x: inspect.isroutine(x) and not isinstance(x, type(instanced_type.__init__)) and not inspect.isbuiltin(x) and not x.__name__.startswith("_") and not x.__name__.endswith("_")) ]
-            functions = inspect.getmembers(type_, lambda x: inspect.isfunction(x) and not inspect.isbuiltin(x) and not (x.__name__.startswith("_") or x.__name__.endswith("_")) and x.__name__ in instanced_functions)
+            try:
+                instanced_type = type_() if inspect.isclass(type_) else type_
+                instanced_functions = [ i[0] for i in inspect.getmembers(instanced_type, lambda x: inspect.isroutine(x) and not isinstance(x, type(instanced_type.__init__)) and not inspect.isbuiltin(x) and not x.__name__.startswith("_") and not x.__name__.endswith("_")) ]
+            except TypeError:
+                instanced_functions = None
+                
+            functions = inspect.getmembers(type_, lambda x: inspect.isfunction(x) and not inspect.isbuiltin(x) and not (x.__name__.startswith("_") or x.__name__.endswith("_")) and (x.__name__ in instanced_functions if instanced_functions else True))
             if functions:
                 for func_name, func in functions:
                     f_model = self.create_model(func, name=func_name)
