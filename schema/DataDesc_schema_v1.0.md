@@ -16,6 +16,17 @@ The structure and content of the DataDesc schema is based on the OpenAPI specifi
 
 In the area of the general description of research software, the CodeMeta metadata standard and the Schema.org ontology on which it is based were closely followed, and adopted metadata elements were integrated within the hierarchical documentation structure. As a result, the DataDesc schema is largely compatible with both the OpenAPI and the Schema.org or CodeMeta standards and minimizes the amount of necessarily individually defined terminology. This is explicitly shown by the mappings presented in this documentation, which can be used to translate the elements of the DataDesc schema into those of OpenAPI and Schema.org. In addition, the QUDT ontology was used as a basis for the units of measurement.
 
+</br>
+<p align="center">
+    <div style="width: 100%; display: inline-block" align="center">
+        <img src="https://github.com/FZJ-IEK3-VSA/DataDesc/blob/main/schema/DataDescSchema.png?raw=true" style="width: 50%">
+    </div>
+     <div align="center">
+       <em>Structure and content of the DataDesc schema for describing software and their interface data models. Both the general and the technical information is organized in information objects within a hierarchical structure, which is indicated by arrows pointing from child to parent objects. DataDesc properties that comply with the OpenAPI specification directly or via extensions are marked with white circles or white triangles respectively. Properties that map to the Schema.org ontology are indicated by a gray square.</em>
+    </div>
+    
+</p></br>
+
 Meaning of the property descriptions used in this documentation:
 - Property: The property describes a characteristic of an object. The name of the property is used within the schema as an identifier of the characteristic.
 - Label: The label adds context to the property name, if necessary. It quickly conveys the meaning of the property, but is also short enough to be easily displayed in tables and documentation snippets.
