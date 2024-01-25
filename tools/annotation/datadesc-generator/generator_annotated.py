@@ -820,14 +820,14 @@ if __name__ == '__main__':
 
     to_json = True
 
-    #args = vars(parse_arguments())
-    #parse_vars = args["variables"]
-    #output_fname = args["out"]
-    #import_mod = importlib.import_module(args["module"])
+    args = vars(parse_arguments())
+    parse_vars = args["variables"]
+    output_fname = args["out"]
+    import_mod = importlib.import_module(args["module"])
 
-    parse_vars = True
-    output_fname = 'Examples/annotated_complex.json' #args["out"]
-    import_mod = importlib.import_module('Examples.annotated_complex') 
+    #parse_vars = True
+    #output_fname = 'Examples/annotated_complex.json' #args["out"]
+    #import_mod = importlib.import_module('Examples.annotated_complex') 
     types = collect_from_module( import_mod, inspect.isclass )
     funcs = collect_from_module( import_mod, inspect.isfunction )
     fvars = collect_variables_from_module(  import_mod )
