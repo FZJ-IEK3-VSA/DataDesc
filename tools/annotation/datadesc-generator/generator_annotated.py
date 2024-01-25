@@ -718,7 +718,6 @@ class Generator(object):
                 for func_name, func in functions:
                     f_model = self.create_model(func, name=func_name)
                     model.append_function(f_model)
-            del instanced_type
 
             # convert class variables to models and append to class model
             variables = inspect.getmembers(type_, lambda x: not inspect.isclass(x) and not inspect.isfunction(x) and not inspect.ismodule(x))
