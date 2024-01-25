@@ -110,36 +110,40 @@ def merge_schemas(j1, j2, override=False):
         ddiff = DeepDiff(j1_snippet, j2_snippet)
 
         pattern = re.compile(r"'([^']+)'")
-        for k,v in ddiff.get("values_changed").items():
-            acc_value = input(
+
+        if ddiff.get("values_changed"):
+            for k,v in ddiff.get("values_changed").items():
+                acc_value = input(
                     """Field {} is ambiguous; which value to accept?
         #-- {} (1 - default)
         #-- {} (2 - new)
             >> """.format(k,v["old_value"],v["new_value"]))
-            if acc_value not in ["1","2"]:
-                acc_value = "1"
+                if acc_value not in ["1","2"]:
+                    acc_value = "1"
 
-            if acc_value == "2":
-                matches = pattern.findall(k)
-                update_at_path( j1_snippet, matches, v["new_value"] )
+                if acc_value == "2":
+                    matches = pattern.findall(k)
+                    update_at_path( j1_snippet, matches, v["new_value"] )
 
-        for item in ddiff.get("dictionary_item_added"):
-            matches = pattern.findall(item)
-            new_value = get_at_path(j2_snippet, matches)
-            update_at_path( j1_snippet, matches, new_value, build_path=True )
+        if ddiff.get("dictionary_item_added"):
+            for item in ddiff.get("dictionary_item_added"):
+                matches = pattern.findall(item)
+                new_value = get_at_path(j2_snippet, matches)
+                update_at_path( j1_snippet, matches, new_value, build_path=True )
 
-        for item in ddiff.get("dictionary_item_removed"):
-            matches = pattern.findall(item)
-            print(item, matches)
-            acc_value = input(
+        if ddiff.get("dictionary_item_removed"):
+            for item in ddiff.get("dictionary_item_removed"):
+                matches = pattern.findall(item)
+                print(item, matches)
+                acc_value = input(
                     """Field {} is removed in new version; which value to accept?
         #-- {} (1 - default)
         #-- [REMOVE] (2 - new)
             >> """.format(item,get_at_path(j1_snippet, matches)))
-            if acc_value not in ["1","2"]:
-                acc_value = "1"
-            if acc_value == "2":
-                update_at_path( j1_snippet, matches, None )
+                if acc_value not in ["1","2"]:
+                    acc_value = "1"
+                if acc_value == "2":
+                    update_at_path( j1_snippet, matches, None )
         
         new_j1 = copy.deepcopy(j1)
         
