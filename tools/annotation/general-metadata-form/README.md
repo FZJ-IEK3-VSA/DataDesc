@@ -4,7 +4,7 @@
 Before you begin, make sure you have Python and pip installed on your system. To install the necessary packages, open a terminal and run the following commands:
 
 ```bash
-pip install notebook jupyter_server
+pip install -r requirements.txt
 ```
 
 ## Launch Jupyter Notebook
