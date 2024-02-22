@@ -1,0 +1,42 @@
+{
+            "identifier": "data.json",
+            "dataSchema": {
+                "type": "object",
+                "format": {
+                    "example": "DataFrame"
+                },
+                "properties": [
+		        {
+		            "identifier": "T2M",
+		            "type": "number",
+		            "properties": [
+		                {
+		                    "identifier": "long_name",
+		                    "type": "string",
+		                    "example": "2 meter air temperature"
+		                }
+		            ],
+		            "unit": "C",
+                    "dataValue" : "ABC",
+		            "dimensions": [
+		                "lat",
+		                "lon",
+		                "time"
+		            ]
+		        }
+                ],
+                "dimensions": [
+                    {
+                        "identifier": "time_of_measurement",
+                        "properties": [
+                            {
+                                "identifier": "time",
+                                "type": "string",
+                                "description": "The time of the measurement",
+                                "unit": "days since 2000-01-01"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
