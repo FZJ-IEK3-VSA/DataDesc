@@ -1,11 +1,11 @@
 <a href="https://www.fz-juelich.de/en/iek/iek-3"><img src="https://raw.githubusercontent.com/OfficialCodexplosive/README_Assets/862a93188b61ab4dd0eebde3ab5daad636e129d5/FJZ_IEK-3_logo.svg" alt="FZJ Logo" width="300px"></a>
 
-# Framework for machine-actionable Software Metadata
+# DataDesc
 
-Key components of the framework are a metadata schema for software documentation with focus on interfaces, a machine-actionable metadata exchange format and a software toolkit supporting the documentation, extraction and publication of software metadata.
+The framework surrounding DataDesc, a metadata schema for software documentation with focus on interfaces, comes with a machine-actionable metadata exchange format and a software toolkit supporting the documentation, extraction and publication of software metadata.
 
 ## Features
-The framework for machine-actionable Software Metadata combines four distinct python software packages:
+DataDesc combines four distinct python software packages:
 - a form to convert general software metadata into a DataDesc compliant JSON file
 - a parser for extracting extensive metadata information from python source code to DataDesc compliant JSON
 - a tool for combining two DataDesc compliant JSON files into a single one
@@ -23,7 +23,7 @@ Most parts of this framework are out-of-the-box solutions which do not need to b
 
 MIT License
 
-Copyright (c) 2022 Patrick Kuckertz (FZJ/IEK-3), Jan-Maris Göpfert (FZJ/IEK-3), Oliver Karras (TIB), David Neuroth (FZJ/IEK-3), Julian Schönau (FZJ/IEK-3), Rodrigo Pueblas (FZJ/IEK-3), Stephan Ferenz (University of Oldenburg/ Dept. of Computer Science), Felix Engel (TIB), Noah Pflugradt (FZJ/IEK-3), Jann Michael Weinand (FZJ/IEK-3), Leander Kotzur (FZJ/IEK-3), Astrid Nieße (University of Oldenburg/ Dept. of Computer Science), Sören Auer (TIB), Detlef Stolten (FZJ/IEK-3, RWTH)
+Copyright (c) 2024 Patrick Kuckertz (FZJ/IEK-3), Jan-Maris Göpfert (FZJ/IEK-3), Oliver Karras (TIB), David Neuroth (FZJ/IEK-3), Julian Schönau (FZJ/IEK-3), Rodrigo Pueblas (FZJ/IEK-3), Stephan Ferenz (University of Oldenburg/ Dept. of Computer Science), Felix Engel (TIB), Noah Pflugradt (FZJ/IEK-3), Jann Michael Weinand (FZJ/IEK-3), Leander Kotzur (FZJ/IEK-3), Astrid Nieße (University of Oldenburg/ Dept. of Computer Science), Sören Auer (TIB), Detlef Stolten (FZJ/IEK-3, RWTH)
 
 You should have received a copy of the MIT License along with this program.
 If not, see https://opensource.org/licenses/MIT
