@@ -179,12 +179,6 @@ The structure of this object is based on OpenAPI's [Parameter Object](https://sw
 The schema object allows the data type definition of a variable. These types can be primitives, but also (nested) arrays and objects.<br>
 The structure of this object is based on OpenAPI's [Schema Object](https://swagger.io/specification/).
 
-<mark>
-Wohin?: characterEncoding: Definition: The character encoding of a file. Examples: UTF-8, UTF-16, ...
-https://www.iana.org/assignments/character-sets/character-sets.xhtml; https://www.iana.org/assignments/media-types/media-types.xhtml; application/vnd.ms-excel; application/netcdf
-</mark>
-<mark>Expected values; noch nicht zufrieden mit required properties</mark>
-
 | Property                                                                                                                       | Label                         | Data Type/Format                                                                                        | Required                         | OpenAPI Mapping                                                                   | Schema.org Mapping                                            |
 | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | [identifier](https://github.com/FZJ-IEK3-VSA/DataDesc/blob/main/schema/DataDesc_schema_v1.1.md#identifier)                     | Identifier                    | string                                                                                                  | False                            | [identifier](https://swagger.io/specification/)                                   | [identifier](https://schema.org/identifier)                   |
