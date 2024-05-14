@@ -59,4 +59,4 @@ Last but not least, the workflow needs information on both the general as well a
 
 ## Annotation of datasets
 
-As of now, datasets can only be manually annotated using the DataDesc schema. Refer to the [*DataDesc Schema Examples section*](https://github.com/FZJ-IEK3-VSA/DataDesc/blob/main/schema/DataDesc_schema_v1.0.md#netcdf--xarray) for details.
+As of now, datasets can only be manually annotated using the DataDesc schema. Refer to the [*DataDesc Schema Examples section*](https://github.com/FZJ-IEK3-VSA/DataDesc/blob/main/schema/DataDesc_schema_v1.1.md#netcdf--xarray) for details.
